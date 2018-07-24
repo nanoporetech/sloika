@@ -1,0 +1,5 @@
+h5py >= 2.2.1,<=2.6.0
+numpy >= 1.9.0
+Theano == 0.8.2
+biopython >= 1.63
+fast5_research >= 1.2.2

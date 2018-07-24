@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export THEANO_FLAGS="openmp=True,floatX=float32,warn_float64=warn,optimizer=fast_run,device=gpu${GPU},lib.cnmem=0.4"
+
+${BIN_DIR}/train_network.py $@

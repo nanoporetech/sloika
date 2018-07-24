@@ -1,0 +1,2 @@
+filename
+read1.fast5

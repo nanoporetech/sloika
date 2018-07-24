@@ -1,0 +1,101 @@
+SHELL=/bin/bash
+
+pwd:=$(shell pwd)/
+bin:=${pwd}bin/
+nproc:=$(shell nproc)
+
+# set this to nothing to get system environment
+envCmd?=source $${DEV_VIRTUALENV_DIR}/bin/activate &&
+
+pipInstall:=pip install
+inTmpEnv:=source environment && source $${TMP_VIRTUALENV_DIR}/bin/activate &&
+inDevEnv:=source environment && ${envCmd}
+inEnv:=source environment &&
+
+
+.PHONY: default
+default: testInEnv
+
+.PHONY: test
+test: testNoEnv
+
+.PHONY: testInEnv
+testInEnv: unitTest
+
+.PHONY: testNoEnv
+testNoEnv: unitTestNoEnv
+
+
+pyTestArgs?=-n 4
+unitset?=
+unitTestCmd:=${pipInstall} -r test/unit/requirements.txt && cd test/unit && py.test ${pyTestArgs} -v -s --fulltrace ${unitset}
+unitTest:
+	${inDevEnv} ${unitTestCmd}
+unitTestFromScratch: cleanTmpEnvWithWheelInstalled
+	${inTmpEnv} ${unitTestCmd}
+unitTestNoEnv:
+	${unitTestCmd}
+
+
+.PHONY: cleanDevEnv
+cleanDevEnv: cleanVirtualenv
+	./setup-dev-env.sh
+
+.PHONY: cleanVirtualenv
+cleanVirtualenv:
+	${inEnv} rm -rf $${DEV_VIRTUALENV_DIR}
+	./setup-virtualenv.sh
+
+.PHONY: cleanTmpEnv
+cleanTmpEnv:
+	source environment && rm -rf $${TMP_VIRTUALENV_DIR} && virtualenv -p python3 $${TMP_VIRTUALENV_DIR}
+	${inTmpEnv} pip install pip --upgrade
+
+.PHONY: cleanTmpEnvWithDeps
+cleanTmpEnvWithDeps: cleanTmpEnv
+	${inTmpEnv} ${pipInstall} -r scripts/requirements.txt && \
+	               ${pipInstall} -r requirements.txt
+
+.PHONY: wheel
+wheel: cleanTmpEnvWithDeps
+	${inTmpEnv} python setup.py bdist_wheel
+	ls -l dist/*.whl
+
+.PHONY: cleanTmpEnvWithWheelInstalled
+cleanTmpEnvWithWheelInstalled: cleanTmpEnv
+	${inTmpEnv} ${pipInstall} --find-links=dist/ "sloika==${projectVersion}"
+
+
+.PHONY: autopep8
+autopep8:
+	${inDevEnv} autopep8 --ignore E203 -i --max-line-length=120 ${pyFiles}
+
+.PHONY: pep8
+pep8:
+	${inDevEnv} pep8 --ignore E203,E402 --max-line-length=120 ${pyFiles}
+
+
+cmd?=echo "Set 'cmd' to command to run in dev env"
+.PHONY: runInTmpEnv
+runInTmpEnv:
+	@${inTmpEnv} ${cmd}
+
+.PHONY: clean
+clean:
+	(source environment && rm -rf $${BUILD_DIR})
+	rm -rf dist/ deb_dist/ *.egg-info/
+	find . -name '*.pyc' -delete
+	find . -name '*.so' -delete
+
+.PHONY: pp pullpush
+pp: pullpush
+pullpush:
+	${MAKE} pep8
+	cd data && git pull --rebase && git push
+	git pull --rebase && git push
+
+.PHONY: debDeps
+debDeps: deps
+	apt-get install -y \
+	    python-stdeb dpkg-dev fakeroot lintian
+

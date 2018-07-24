@@ -1,0 +1,9 @@
+filename
+read1.fast5
+read2.fast5
+read3.fast5
+read4.fast5
+read5.fast5
+read6.fast5
+read7.fast5
+read8.fast5

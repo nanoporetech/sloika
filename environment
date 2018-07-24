@@ -1,0 +1,28 @@
+#!/bin/bash -ex
+
+export ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export BUILD_DIR="${ROOT_DIR}/build"
+
+export DATA_DIR="${ROOT_DIR}/data"
+
+export SCRIPTS_DIR="${ROOT_DIR}/scripts"
+
+export BIN_DIR="${ROOT_DIR}/bin"
+
+export DEV_VIRTUALENV_DIR="${BUILD_DIR}/env"
+
+export TMP_VIRTUALENV_DIR="${BUILD_DIR}/tmpenv"
+
+export PYTHONDONTWRITEBYTECODE="no .pyc files please"
+
+export COMMON_THEANO_FLAGS_FOR_TRAINING="floatX=float32,warn_float64=warn,optimizer=fast_compile"
+
+#
+# TODO(semen): pass OMP_NUM_THREADS=1 when basecalling
+#
+export COMMON_THEANO_FLAGS_FOR_BASECALLING="device=cpu,floatX=float32,warn_float64=warn"
+
+export PATH="/usr/local/cuda/bin:${PATH}"
+
+source ${SCRIPTS_DIR}/version-env.sh

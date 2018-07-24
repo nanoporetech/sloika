@@ -1,0 +1,2 @@
+nose-parameterized == 0.5.0
+pytest-xdist == 1.15.0
