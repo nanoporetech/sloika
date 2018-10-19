@@ -56,7 +56,7 @@ def viterbi(post, klen, skip_pen=0.0, log=False, nbase=4):
     lpost = np.log(post + _ETA) if not log else post
     vscore = lpost[0][1:].copy()
     pscore = np.empty(nkmer)
-    traceback = np.empty((nev, nkmer), dtype=np.int16)
+    traceback = np.empty((nev, nkmer), dtype=np.int32)
     for i in range(1, nev):
         #  Forwards Viterbi iteration
         pscore, vscore = vscore, pscore
@@ -81,7 +81,7 @@ def viterbi(post, klen, skip_pen=0.0, log=False, nbase=4):
         traceback[i] = np.where(vscore > score_stay, traceback[i], -1)
         vscore = np.maximum(vscore, score_stay)
 
-    stseq = np.empty(nev, dtype=np.int16)
+    stseq = np.empty(nev, dtype=np.int32)
     seq = [np.argmax(vscore)]
     for i in range(nev - 1, 0, -1):
         #  Viterbi traceback

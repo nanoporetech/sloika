@@ -30,7 +30,7 @@ def map_to_sequence(trans, sequence, slip=None, prior_initial=None, prior_final=
     ltrans = trans if log else np.log(trans)
 
     # Matrix for Viterbi traceback of path
-    vmat = np.zeros((nev, npos), dtype=np.int16)
+    vmat = np.zeros((nev, npos), dtype=np.int32)
     # Vectors for current and previous score
     pscore = np.zeros(npos, dtype=sloika_dtype)
     cscore = np.zeros(npos, dtype=sloika_dtype)
@@ -64,7 +64,7 @@ def map_to_sequence(trans, sequence, slip=None, prior_initial=None, prior_final=
         pscore += prior_final
 
     # Viterbi traceback
-    path = np.empty(nev, dtype=np.int16)
+    path = np.empty(nev, dtype=np.int32)
     path[0] = np.argmax(pscore)
     max_score = pscore[path[0]]
     for i in range(1, nev):
