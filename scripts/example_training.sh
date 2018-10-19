@@ -25,7 +25,7 @@ extract_reference.py reads references.fa
 THEANO_FLAGS=${THEANO_FLAGS_CPU} chunkify.py raw_remap --jobs ${NCPU} --chunk_len 4000 --downsample_factor 5 --output_strand_list unfiltered_strands.txt  reads remapped_unfiltered.hdf5 sloika/models/pretrained.pkl references.fa
 
 #  Filter reads -- criterion from distribution of mapping scores,  coverage and proportion of stays
-( head -n 1 unfiltered_strands.txt ; cat unfiltered_strands.txt | awk '$3 > 0.5 && $3 < 1.2 && ($7 - $6) > 0.95 * $5 && $5 / ($7 - $6 + $5) < 0.55' ) > filtered_strand_list.txt
+( head -n 1 unfiltered_strands.txt ; cat unfiltered_strands.txt | awk '$3 > 0.5 && $3 < 1.2 && ($7 - $6) > 0.95 * $5 && $4 / ($7 - $6 + $4) < 0.55' ) > filtered_strand_list.txt
 
 #  Remap selected reads -- takes a few hours
 THEANO_FLAGS=${THEANO_FLAGS_CPU} chunkify.py raw_remap --jobs ${NCPU} --chunk_len 4000 --downsample_factor 5 --input_strand_list filtered_strand_list.txt --output_strand_list filtered_strands.txt reads remapped_filtered.hdf5 sloika/models/pretrained.pkl references.fa
