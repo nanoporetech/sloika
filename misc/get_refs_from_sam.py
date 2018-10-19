@@ -50,15 +50,14 @@ def get_refs(sam, ref_seq_dict, min_coverage=0.6, pad=50):
             if coverage < min_coverage:
                 continue
 
-            start = read.reference_start - read.query_alignment_start - pad
-            end = read.reference_end + read.query_length - read.query_alignment_end + pad
-            strand = STRAND[read.flag]
-
             ref = ref_seq_dict.get(sf.references[read.reference_id], None)
-
             if ref is None:
                 continue
 
+            start = max(0, read.reference_start - read.query_alignment_start - pad)
+            end = min(len(ref.seq), read.reference_end + read.query_length - read.query_alignment_end + pad)
+
+            strand = STRAND[read.flag]
             if strand == "+":
                 read_ref = str(ref.seq[start:end]).upper()
             else:
