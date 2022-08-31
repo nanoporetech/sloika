@@ -1,3 +1,6 @@
+**This repository is deprecated. See [bonito](https://github.com/nanoporetech/bonito) for our current software providing basecaller training.**
+
+
 Sloika is ONT research software for training RNN models for basecalling Oxford Nanopore reads. Sloika is built on top of Theano and is compatible with python 3.4+
 
 ## Installation of system prerequisites
